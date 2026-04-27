@@ -1,0 +1,14 @@
+{
+  "name": "James Chen",
+  "age": 64,
+  "gender": "Male",
+  "diagnosis": "Clear cell renal cell carcinoma",
+  "stage": "Stage IV (metastatic to lungs)",
+  "prior_treatments": "Sunitinib (6 months, discontinued due to progression), Nivolumab + Ipilimumab (4 cycles, partial response then progression)",
+  "medications": "Lisinopril 10mg daily, Atorvastatin 40mg daily, Aspirin 81mg daily",
+  "comorbidities": "Hypertension, Hyperlipidemia, History of DVT (deep vein thrombosis) 3 years ago",
+  "lab_values": "eGFR: 55 mL/min, Creatinine: 1.4, WBC: 6.8, Hemoglobin: 10.2, Platelets: 195, LDH: elevated",
+  "location": "Boston, MA",
+  "location_coords": [42.3601, -71.0589],
+  "notes": "Patient progressed through two lines of therapy. ECOG performance status 1. Has measurable disease per RECIST criteria. Interested in combination therapy or novel agents. No brain metastases."
+}

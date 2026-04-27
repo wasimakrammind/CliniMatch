@@ -1,0 +1,14 @@
+{
+  "name": "Sarah Martinez",
+  "age": 52,
+  "gender": "Female",
+  "diagnosis": "Invasive ductal carcinoma (breast cancer)",
+  "stage": "Stage IIIA",
+  "prior_treatments": "Doxorubicin + Cyclophosphamide (AC) chemotherapy (4 cycles), Paclitaxel (12 weekly), Trastuzumab (completed 1 year)",
+  "medications": "Tamoxifen 20mg daily, Metformin 500mg BID",
+  "comorbidities": "Type 2 diabetes (controlled), Hypertension",
+  "lab_values": "eGFR: 72 mL/min, HER2: positive, ER: positive, PR: negative, WBC: 5.2, Hemoglobin: 11.8",
+  "location": "Houston, TX",
+  "location_coords": [29.7604, -95.3698],
+  "notes": "Patient had partial response to initial chemo but disease progressed after trastuzumab. Looking for next-line treatment options. ECOG performance status 1. No known drug allergies."
+}

@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CliniMatch — Architecture & Tech Stack</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; background: #0a0e1a; color: #e0e4ef; min-height: 100vh; padding: 40px 20px; }
+
+  .page-header { text-align: center; margin-bottom: 50px; }
+  .page-header h1 { font-size: 32px; font-weight: 800; color: #fff; letter-spacing: -0.5px; }
+  .page-header h1 span { color: #02C39A; }
+  .page-header p { color: #5a6384; font-size: 14px; margin-top: 6px; }
+
+  .section { max-width: 1100px; margin: 0 auto 60px; }
+  .section-label {
+    font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase;
+    color: #02C39A; margin-bottom: 20px; padding-left: 4px;
+  }
+
+  /* ── ARCHITECTURE FLOW ── */
+  .arch-flow { display: flex; flex-direction: column; align-items: center; gap: 0; }
+
+  .arch-layer {
+    width: 100%; max-width: 1000px; border-radius: 14px; padding: 24px 28px;
+    border: 1px solid #1e2440; position: relative; background: #111629;
+  }
+
+  .layer-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
+  .layer-tag {
+    font-size: 10px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase;
+    padding: 3px 12px; border-radius: 4px;
+  }
+  .tag-green { background: rgba(2,195,154,0.12); color: #02C39A; }
+  .tag-blue { background: rgba(96,165,250,0.12); color: #60a5fa; }
+  .tag-purple { background: rgba(167,139,250,0.12); color: #a78bfa; }
+  .tag-orange { background: rgba(245,158,66,0.12); color: #f59e42; }
+
+  .layer-title { font-size: 20px; font-weight: 700; color: #fff; }
+  .layer-subtitle { font-size: 13px; color: #5a6384; margin-bottom: 16px; }
+
+  .layer-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; }
+
+  .lc {
+    background: rgba(0,0,0,0.25); border-radius: 10px; padding: 14px 16px;
+    border: 1px solid #1a2040; transition: border-color 0.2s;
+  }
+  .lc:hover { border-color: #02C39A; }
+  .lc-name { font-size: 14px; font-weight: 700; color: #fff; margin-bottom: 4px; }
+  .lc-tech { font-size: 10px; font-weight: 600; color: #02C39A; margin-bottom: 6px; letter-spacing: 0.5px; }
+  .lc-desc { font-size: 12px; color: #6b7394; line-height: 1.5; }
+
+  .arrow-down {
+    display: flex; flex-direction: column; align-items: center; padding: 4px 0;
+  }
+  .arrow-down .line { width: 2px; height: 20px; background: linear-gradient(180deg, #02C39A40, #065A8240); }
+  .arrow-down .head { width: 0; height: 0; border-left: 7px solid transparent; border-right: 7px solid transparent; border-top: 8px solid #02C39A50; }
+
+  /* ── TECH STACK GRID ── */
+  .tech-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 14px; }
+
+  .tech-card {
+    background: #111629; border: 1px solid #1e2440; border-radius: 12px; padding: 18px 20px;
+    transition: transform 0.2s, border-color 0.2s;
+  }
+  .tech-card:hover { transform: translateY(-2px); border-color: #028090; }
+  .tc-category { font-size: 10px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 8px; }
+  .tc-cat-api { color: #02C39A; }
+  .tc-cat-lib { color: #60a5fa; }
+  .tc-cat-infra { color: #a78bfa; }
+  .tc-cat-ui { color: #f59e42; }
+  .tc-name { font-size: 16px; font-weight: 700; color: #fff; margin-bottom: 4px; }
+  .tc-purpose { font-size: 12px; color: #6b7394; line-height: 1.5; }
+  .tc-cost { font-size: 10px; font-weight: 600; color: #02C39A; margin-top: 8px; }
+
+  /* ── DATA FLOW DIAGRAM ── */
+  .dataflow {
+    display: flex; align-items: stretch; gap: 0; justify-content: center; flex-wrap: wrap;
+  }
+  .df-node {
+    background: #111629; border: 1px solid #1e2440; border-radius: 12px; padding: 16px;
+    min-width: 140px; max-width: 180px; text-align: center; position: relative;
+  }
+  .df-node-title { font-size: 13px; font-weight: 700; color: #fff; margin-bottom: 4px; }
+  .df-node-desc { font-size: 11px; color: #6b7394; }
+  .df-arrow {
+    display: flex; align-items: center; justify-content: center; width: 40px; color: #02C39A60; font-size: 20px;
+  }
+
+  /* ── FILE TREE ── */
+  .file-tree {
+    font-family: 'Consolas', 'Courier New', monospace; font-size: 13px; line-height: 2;
+    background: #0d1220; padding: 24px 28px; border-radius: 12px; border: 1px solid #1e2440;
+    overflow-x: auto;
+  }
+  .ft-folder { color: #60a5fa; font-weight: 700; }
+  .ft-file { color: #8892b0; }
+  .ft-highlight { color: #02C39A; font-weight: 700; }
+  .ft-desc { color: #3d4560; font-style: italic; }
+
+  @media (max-width: 700px) {
+    .layer-cards { grid-template-columns: 1fr; }
+    .tech-grid { grid-template-columns: 1fr; }
+    .dataflow { flex-direction: column; align-items: center; }
+    .df-arrow { transform: rotate(90deg); width: auto; height: 30px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="page-header">
+  <h1>💊 <span>CliniMatch</span> — Architecture & Tech Stack</h1>
+  <p>AI-Powered Clinical Trial Matching System · Group 13 · Milestone 1</p>
+</div>
+
+<!-- ════════════════════ SYSTEM ARCHITECTURE ════════════════════ -->
+<div class="section">
+  <div class="section-label">System Architecture — 3-Layer Pipeline</div>
+  <div class="arch-flow">
+
+    <!-- APPLICATION LAYER -->
+    <div class="arch-layer">
+      <div class="layer-header">
+        <div class="layer-title">🖥️ Application Layer</div>
+        <span class="layer-tag tag-orange">FRONTEND</span>
+      </div>
+      <div class="layer-subtitle">User-facing Streamlit dashboard — input, visualization, interaction</div>
+      <div class="layer-cards">
+        <div class="lc">
+          <div class="lc-name">Patient Input Form</div>
+          <div class="lc-tech">STREAMLIT</div>
+          <div class="lc-desc">Sidebar form: age, gender, diagnosis, treatments, medications, location. Load sample profiles or enter manually.</div>
+        </div>
+        <div class="lc">
+          <div class="lc-name">Ranked Trial Cards</div>
+          <div class="lc-tech">STREAMLIT</div>
+          <div class="lc-desc">Cards with match scores, badges, phase, sponsor. Expandable details for eligibility, evidence, locations.</div>
+        </div>
+        <div class="lc">
+          <div class="lc-name">Weight Sliders</div>
+          <div class="lc-tech">STREAMLIT WIDGETS</div>
+          <div class="lc-desc">5 adjustable sliders for ranking priorities: eligibility, distance, phase, urgency, evidence.</div>
+        </div>
+        <div class="lc">
+          <div class="lc-name">Evidence Panel</div>
+          <div class="lc-tech">STREAMLIT TABS</div>
+          <div class="lc-desc">Tabbed views: score breakdown, eligibility criteria (pass/fail), Semantic Scholar + PubMed evidence, trial locations with map.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="arrow-down"><div class="line"></div><div class="head"></div></div>
+
+    <!-- INTELLIGENCE LAYER -->
+    <div class="arch-layer">
+      <div class="layer-header">
+        <div class="layer-title">🧠 Intelligence Layer</div>
+        <span class="layer-tag tag-blue">AI / ML</span>
+      </div>
+      <div class="layer-subtitle">Core reasoning — disease extraction, eligibility evaluation, evidence verification, ranking</div>
+      <div class="layer-cards">
+        <div class="lc">
+          <div class="lc-name">Disease Extraction</div>
+          <div class="lc-tech">GPT-4.1 MINI</div>
+          <div class="lc-desc">Extracts structured disease info from free-text patient profile. Outputs condition name, keywords, stage, key factors.</div>
+        </div>
+        <div class="lc">
+          <div class="lc-name">Eligibility Filter</div>
+          <div class="lc-tech">GPT-4.1 MINI</div>
+          <div class="lc-desc">Evaluates each trial's inclusion/exclusion criteria against patient. Understands medical synonyms (semantic matching).</div>
+        </div>
+        <div class="lc">
+          <div class="lc-name">Evidence Verification</div>
+          <div class="lc-tech">SEMANTIC SCHOLAR + BIOPYTHON</div>
+          <div class="lc-desc">Checks drug efficacy via Semantic Scholar (with citation counts) and PubMed (peer-reviewed papers). Cross-references both sources. Both FREE.</div>
+        </div>
+        <div class="lc">
+          <div class="lc-name">Multi-Objective Ranker</div>
+          <div class="lc-tech">PYTHON + GEOPY</div>
+          <div class="lc-desc">Scores trials across 5 dimensions (eligibility, distance, phase, urgency, evidence). Normalizes to 0-1, applies user weights.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="arrow-down"><div class="line"></div><div class="head"></div></div>
+
+    <!-- DATA LAYER -->
+    <div class="arch-layer">
+      <div class="layer-header">
+        <div class="layer-title">🗄️ Data & Infrastructure Layer</div>
+        <span class="layer-tag tag-green">DATA SOURCES</span>
+      </div>
+      <div class="layer-subtitle">External APIs and data sources feeding the pipeline</div>
+      <div class="layer-cards">
+        <div class="lc">
+          <div class="lc-name">ClinicalTrials.gov API v2</div>
+          <div class="lc-tech">REST API · FREE</div>
+          <div class="lc-desc">500K+ trials. Returns JSON: eligibility criteria, phases, enrollment, site locations (lat/lng), sponsors, dates.</div>
+        </div>
+        <div class="lc">
+          <div class="lc-name">Semantic Scholar API</div>
+          <div class="lc-tech">REST API · FREE</div>
+          <div class="lc-desc">Academic paper search with citation counts, abstracts, DOIs. Drug efficacy evidence from peer-reviewed research.</div>
+        </div>
+        <div class="lc">
+          <div class="lc-name">PubMed / NCBI</div>
+          <div class="lc-tech">ENTREZ API · FREE</div>
+          <div class="lc-desc">30M+ peer-reviewed papers. Search by drug + condition. Returns titles, abstracts, DOIs.</div>
+        </div>
+        <div class="lc">
+          <div class="lc-name">Synthetic Patients</div>
+          <div class="lc-tech">JSON FILES · INTERNAL</div>
+          <div class="lc-desc">3-5 hand-crafted HIPAA-safe test profiles. Breast cancer, renal cell carcinoma, lung cancer.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════ DATA FLOW ════════════════════ -->
+<div class="section">
+  <div class="section-label">End-to-End Data Flow</div>
+  <div class="dataflow">
+    <div class="df-node">
+      <div class="df-node-title">👤 Patient Profile</div>
+      <div class="df-node-desc">Age, diagnosis, treatments, location</div>
+    </div>
+    <div class="df-arrow">→</div>
+    <div class="df-node">
+      <div class="df-node-title">🧠 GPT-4.1 mini</div>
+      <div class="df-node-desc">Extract disease, keywords</div>
+    </div>
+    <div class="df-arrow">→</div>
+    <div class="df-node">
+      <div class="df-node-title">🔍 CT.gov API</div>
+      <div class="df-node-desc">Fetch recruiting trials</div>
+    </div>
+    <div class="df-arrow">→</div>
+    <div class="df-node">
+      <div class="df-node-title">🧠 LLM Filter</div>
+      <div class="df-node-desc">Evaluate eligibility</div>
+    </div>
+    <div class="df-arrow">→</div>
+    <div class="df-node">
+      <div class="df-node-title">📚 Evidence</div>
+      <div class="df-node-desc">Semantic Scholar + PubMed</div>
+    </div>
+    <div class="df-arrow">→</div>
+    <div class="df-node">
+      <div class="df-node-title">📊 Ranker</div>
+      <div class="df-node-desc">5-objective weighted score</div>
+    </div>
+    <div class="df-arrow">→</div>
+    <div class="df-node">
+      <div class="df-node-title">🖥️ Dashboard</div>
+      <div class="df-node-desc">Ranked trial cards</div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════ TECH STACK ════════════════════ -->
+<div class="section">
+  <div class="section-label">Complete Tech Stack</div>
+  <div class="tech-grid">
+    <div class="tech-card">
+      <div class="tc-category tc-cat-ui">UI FRAMEWORK</div>
+      <div class="tc-name">Streamlit</div>
+      <div class="tc-purpose">Interactive Python dashboard. Forms, sliders, expanders, tabs, maps. No frontend code needed.</div>
+      <div class="tc-cost">FREE — pip install streamlit</div>
+    </div>
+    <div class="tech-card">
+      <div class="tc-category tc-cat-api">LLM ENGINE</div>
+      <div class="tc-name">GPT-4.1 mini</div>
+      <div class="tc-purpose">Disease extraction from patient text. Eligibility criteria evaluation with semantic understanding.</div>
+      <div class="tc-cost">~$0.01/trial · ~$10 total</div>
+    </div>
+    <div class="tech-card">
+      <div class="tc-category tc-cat-api">EVIDENCE API</div>
+      <div class="tc-name">Semantic Scholar API</div>
+      <div class="tc-purpose">Academic paper search with citation counts. Drug efficacy evidence from peer-reviewed research.</div>
+      <div class="tc-cost">FREE — no API key needed</div>
+    </div>
+    <div class="tech-card">
+      <div class="tc-category tc-cat-api">TRIAL DATABASE</div>
+      <div class="tc-name">ClinicalTrials.gov v2</div>
+      <div class="tc-purpose">Primary trial registry. 500K+ studies. JSON API with eligibility, locations, phases, sponsors.</div>
+      <div class="tc-cost">FREE — no API key needed</div>
+    </div>
+    <div class="tech-card">
+      <div class="tc-category tc-cat-lib">LITERATURE SEARCH</div>
+      <div class="tc-name">Biopython / Entrez</div>
+      <div class="tc-purpose">PubMed search API. 30M+ papers. Returns titles, abstracts, DOIs for drug evidence cross-referencing.</div>
+      <div class="tc-cost">FREE — needs email for Entrez</div>
+    </div>
+    <div class="tech-card">
+      <div class="tc-category tc-cat-lib">GEOSPATIAL</div>
+      <div class="tc-name">Geopy</div>
+      <div class="tc-purpose">Geodesic distance calculation between patient location and trial site GPS coordinates.</div>
+      <div class="tc-cost">FREE — pip install geopy</div>
+    </div>
+    <div class="tech-card">
+      <div class="tc-category tc-cat-lib">HTTP CLIENT</div>
+      <div class="tc-name">Requests</div>
+      <div class="tc-purpose">HTTP calls to ClinicalTrials.gov API and Semantic Scholar API. Handles JSON parsing and timeouts.</div>
+      <div class="tc-cost">FREE — pip install requests</div>
+    </div>
+    <div class="tech-card">
+      <div class="tc-category tc-cat-lib">DATA HANDLING</div>
+      <div class="tc-name">Pandas</div>
+      <div class="tc-purpose">DataFrame operations for trial data manipulation, map rendering, and tabular displays in Streamlit.</div>
+      <div class="tc-cost">FREE — pip install pandas</div>
+    </div>
+    <div class="tech-card">
+      <div class="tc-category tc-cat-infra">LANGUAGE</div>
+      <div class="tc-name">Python 3.10+</div>
+      <div class="tc-purpose">Core language for all pipeline modules, Streamlit app, API integrations, and data processing.</div>
+      <div class="tc-cost">FREE</div>
+    </div>
+    <div class="tech-card">
+      <div class="tc-category tc-cat-api">LLM SDK</div>
+      <div class="tc-name">OpenAI Python SDK</div>
+      <div class="tc-purpose">Official SDK for GPT-4.1 mini API calls. Chat completions with JSON mode for structured outputs.</div>
+      <div class="tc-cost">FREE SDK — API usage billed</div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════ FILE STRUCTURE ════════════════════ -->
+<div class="section">
+  <div class="section-label">Project File Structure</div>
+  <div class="file-tree">
+<span class="ft-folder">clinical-trial-matcher/</span>
+├── <span class="ft-highlight">app.py</span>                           <span class="ft-desc">← Main Streamlit dashboard (~200 lines)</span>
+├── <span class="ft-file">config.py</span>                        <span class="ft-desc">← API keys, model settings, defaults</span>
+├── <span class="ft-folder">pipeline/</span>
+│   ├── <span class="ft-file">__init__.py</span>
+│   ├── <span class="ft-highlight">trial_retrieval.py</span>       <span class="ft-desc">← CT.gov API + disease extraction (~100 lines)</span>
+│   ├── <span class="ft-highlight">eligibility_filter.py</span>    <span class="ft-desc">← LLM eligibility evaluation (~90 lines)</span>
+│   ├── <span class="ft-highlight">evidence.py</span>              <span class="ft-desc">← Semantic Scholar + PubMed evidence (FREE) (~100 lines)</span>
+│   └── <span class="ft-highlight">ranker.py</span>                <span class="ft-desc">← Multi-objective weighted ranking (~100 lines)</span>
+├── <span class="ft-folder">data/</span>
+│   ├── <span class="ft-file">patient_1_breast_cancer.json</span>
+│   ├── <span class="ft-file">patient_2_renal_cell.json</span>
+│   └── <span class="ft-file">patient_3_lung_cancer.json</span>
+├── <span class="ft-file">requirements.txt</span>
+└── <span class="ft-file">architecture_diagram.html</span>        <span class="ft-desc">← This file</span>
+
+<span class="ft-desc">Total: ~590 lines across 6 Python files</span>
+  </div>
+</div>
+
+<!-- ════════════════════ DIFFERENTIATORS ════════════════════ -->
+<div class="section">
+  <div class="section-label">Key Differentiators vs Existing Tools</div>
+  <div class="tech-grid" style="grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));">
+    <div class="tech-card" style="border-left: 3px solid #02C39A;">
+      <div class="tc-name">Semantic Eligibility Matching</div>
+      <div class="tc-purpose">Unlike keyword search (ClinicalTrials.gov), our LLM understands medical synonyms: "high BP" = "hypertension", "tumor" = "neoplasm". Evaluates complex nested logic (AND/OR/UNLESS conditions).</div>
+    </div>
+    <div class="tech-card" style="border-left: 3px solid #60a5fa;">
+      <div class="tc-name">Evidence-Based Verification</div>
+      <div class="tc-purpose">No other free tool automatically cross-references drug evidence from Semantic Scholar + PubMed. We don't just match — we verify the treatment is actually promising.</div>
+    </div>
+    <div class="tech-card" style="border-left: 3px solid #a78bfa;">
+      <div class="tc-name">Multi-Objective Ranking</div>
+      <div class="tc-purpose">5-dimensional scoring with user-adjustable weights. Not just "match/no match" — we rank by eligibility, distance, phase, urgency, and evidence strength simultaneously.</div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

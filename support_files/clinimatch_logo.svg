@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <!-- CliniMatch logo: red heart with a W-shaped ECG / heartbeat line -->
+  <defs>
+    <linearGradient id="heartGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#EF4444"/>
+      <stop offset="100%" stop-color="#991B1B"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Heart shape (filled red gradient) -->
+  <path fill="url(#heartGrad)"
+        d="M462.3 62.7C407.5 15.9 326 24.3 275.7 76.2L256 96.5l-19.7-20.3
+           C186.1 24.3 104.5 15.9 49.7 62.7c-62.8 53.6-66.1 149.8-9.9 207.9
+           l193.5 199.8c12.5 12.9 32.8 12.9 45.3 0l193.5-199.8
+           c56.3-58.1 53-154.3-9.8-207.9z"/>
+
+  <!-- W-shaped ECG line through the middle of the heart (white) -->
+  <polyline
+    points="80,256 150,256 185,200 220,320 256,150 292,320 327,200 362,256 432,256"
+    fill="none" stroke="#FFFFFF" stroke-width="22"
+    stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

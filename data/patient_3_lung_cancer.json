@@ -1,0 +1,14 @@
+{
+  "name": "Maria Johnson",
+  "age": 45,
+  "gender": "Female",
+  "diagnosis": "Non-small cell lung cancer (NSCLC), adenocarcinoma",
+  "stage": "Stage IIIB",
+  "prior_treatments": "Carboplatin + Pemetrexed (4 cycles), Pembrolizumab (8 months, then progression)",
+  "medications": "Omeprazole 20mg daily, Lorazepam 0.5mg PRN",
+  "comorbidities": "GERD (gastroesophageal reflux disease), Anxiety disorder",
+  "lab_values": "eGFR: 88 mL/min, EGFR mutation: negative, ALK: negative, PD-L1: 60%, WBC: 4.9, Hemoglobin: 12.1",
+  "location": "Chicago, IL",
+  "location_coords": [41.8781, -87.6298],
+  "notes": "Never smoker. Progressed on first-line immunotherapy. PD-L1 high but immune checkpoint therapy failed. Looking for next-line options, potentially targeted therapy or combination approaches. ECOG 0-1. No significant weight loss."
+}
