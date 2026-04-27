@@ -4,10 +4,6 @@
 
 Built for AI for Engineers · Milestone 2 · Group 13.
 
-![Python](https://img.shields.io/badge/python-3.10%2B-blue)
-![Streamlit](https://img.shields.io/badge/streamlit-1.30%2B-FF4B4B)
-![License](https://img.shields.io/badge/license-MIT-green)
-![Status](https://img.shields.io/badge/status-demo-orange)
 
 ---
 
