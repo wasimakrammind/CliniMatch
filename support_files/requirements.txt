@@ -1,7 +1,0 @@
-streamlit
-openai
-requests
-biopython
-geopy
-pandas
-python-dotenv
