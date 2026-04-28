@@ -491,7 +491,7 @@ if run_btn:
     with st.status("Searching ClinicalTrials.gov...", expanded=True) as status:
         st.write("Extracting disease information from patient profile...")
         trials, disease_info = retrieve_trials(patient)
-        st.write(f"Found **{len(trials)}** recruiting trials for: `{disease_info.get('condition_keywords', '')}`")
+        st.write(f"Searching for: `{disease_info.get('condition_keywords', '')}`")
 
         if not trials:
             status.update(label="No trials found", state="error")
@@ -504,7 +504,7 @@ if run_btn:
         st.write("Evaluating eligibility criteria with AI (topic-wise RAG chunking)...")
         trials = filter_trials(patient, trials)
         eligible_count = sum(1 for t in trials if not t.get("eligibility", {}).get("_filtered_out"))
-        st.write(f"**{eligible_count}** trials passed eligibility screening")
+        st.write("Eligibility screening complete.")
 
         # Step 3: Evidence — only for top-K eligible trials by score, in parallel.
         # This avoids burning Semantic Scholar + PubMed + GPT calls on UNLIKELY matches.
@@ -518,10 +518,7 @@ if run_btn:
         )
         top_k = getattr(config, "EVIDENCE_TOP_K", 15)
         evidence_targets = eligible_trials[:top_k]
-        st.write(
-            f"Checking drug evidence (Semantic Scholar + PubMed) "
-            f"on top **{len(evidence_targets)}** eligible trials in parallel..."
-        )
+        st.write("Checking drug evidence (Semantic Scholar + PubMed) in parallel...")
 
         ev_workers = max(1, min(getattr(config, "EVIDENCE_WORKERS", 8), len(evidence_targets) or 1))
         if evidence_targets:
@@ -555,24 +552,23 @@ if run_btn:
 
         # Step 5: Done
         step_holder.markdown(render_steps(5), unsafe_allow_html=True)
-        status.update(label=f"Found {eligible_count} matching trials", state="complete")
+        status.update(label="Matching complete", state="complete")
 
     # ── Results Display ──────────────────────────────────────────────
     st.divider()
     st.markdown(
-        f'<h3 style="margin-bottom:6px;">{logo_img(26)}Top Matching Trials '
-        f'<span style="color:#64748B; font-weight:400; font-size:0.9rem;">'
-        f'({eligible_count} results)</span></h3>',
+        f'<h3 style="margin-bottom:6px;">{logo_img(26)}Top Matching Trials</h3>',
         unsafe_allow_html=True,
     )
 
-    # Summary metrics
-    col1, col2, col3, col4 = st.columns(4)
-    col1.metric("Trials Searched", len(trials))
-    col2.metric("Eligible", eligible_count)
-    col3.metric("Excluded", len(trials) - eligible_count)
+    # Single best-match highlight (no counts shown)
     best_score = trials[0]["final_score"] if trials else 0
-    col4.metric("Best Match Score", f"{best_score:.0%}")
+    st.markdown(
+        f'<div style="margin: 4px 0 18px 0; color:#64748B; font-size:0.95rem;">'
+        f'Best match score: <span style="color:#991B1B; font-weight:700; font-size:1.1rem;">'
+        f'{best_score:.0%}</span></div>',
+        unsafe_allow_html=True,
+    )
 
     st.divider()
 
